@@ -1,0 +1,70 @@
+# MoCo配置 - 符武文使用
+model:
+  name: "moco"
+  encoder_type: "resnet18"
+  
+  # MoCo特定参数
+  queue_size: 65536           # 队列大小
+  momentum: 0.999             # 动量更新参数
+  temperature: 0.07           # 对比损失温度
+  
+  # 投影头配置
+  projection_dim: 128
+  projection_hidden_dim: 512
+  use_batchnorm: true
+  
+  # 键编码器配置
+  key_encoder_type: "resnet18"
+  update_key_encoder: true    # 是否更新键编码器
+
+data:
+  name: "cifar10"
+  root: "./data"
+  batch_size: 128             # MoCo可以使用较小批次
+  num_workers: 2
+  train_split: 0.9
+  val_split: 0.1
+  
+  # MoCo数据增强（与SimCLR类似但可调整）
+  augmentation:
+    train:
+      random_resized_crop:
+        size: 32
+        scale: [0.2, 1.0]
+      random_horizontal_flip: true
+      color_jitter:
+        brightness: 0.4
+        contrast: 0.4
+        saturation: 0.4
+        hue: 0.1
+        probability: 0.8
+      random_grayscale:
+        probability: 0.2
+
+training:
+  epochs: 200
+  learning_rate: 0.03
+  weight_decay: 0.0001
+  optimizer: "sgd"            # MoCo通常用SGD
+  
+  scheduler:
+    type: "cosine"
+    warmup_epochs: 10
+  
+  # MoCo训练细节
+  moco:
+    shuffle_batch_norm: false  # 是否shuffle BN
+    ema_update_freq: 1         # EMA更新频率
+    
+  save_frequency: 20
+  save_best_only: true
+
+evaluation:
+  linear_eval: true
+  linear_epochs: 100
+  linear_lr: 0.01
+
+logging:
+  log_dir: "./logs/moco"
+  checkpoint_dir: "./results/moco/checkpoints"
+  tensorboard: false

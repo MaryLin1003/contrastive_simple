@@ -1,0 +1,191 @@
+# 消融实验主配置文件
+# 用于批量运行所有消融实验
+
+ablation:
+  experiments:
+    - name: "pretrain_epochs"
+      description: "预训练轮次影响分析（表2）"
+      base_config: "configs/simclr.yaml"  # 以SimCLR为基础
+      variations:
+        - name: "epochs_50"
+          params:
+            training:
+              epochs: 50
+        - name: "epochs_100"
+          params:
+            training:
+              epochs: 100
+        - name: "epochs_150"
+          params:
+            training:
+              epochs: 150
+        - name: "epochs_200"
+          params:
+            training:
+              epochs: 200
+    
+    - name: "augmentation_strategies"
+      description: "数据增强策略影响（表3）"
+      base_config: "configs/simclr.yaml"
+      variations:
+        - name: "basic"
+          description: "基础增强（裁剪+翻转）"
+          params:
+            data:
+              augmentation:
+                train:
+                  random_resized_crop:
+                    size: 32
+                    scale: [0.2, 1.0]
+                  random_horizontal_flip: true
+                  color_jitter:
+                    probability: 0.0  # 无颜色抖动
+                  random_grayscale:
+                    probability: 0.0  # 无灰度化
+                  gaussian_blur:
+                    probability: 0.0  # 无高斯模糊
+        
+        - name: "color_jitter"
+          description: "基础+颜色抖动"
+          params:
+            data:
+              augmentation:
+                train:
+                  color_jitter:
+                    brightness: 0.8
+                    contrast: 0.8
+                    saturation: 0.8
+                    hue: 0.2
+                    probability: 0.8
+                  random_grayscale:
+                    probability: 0.2
+        
+        - name: "gaussian_blur"
+          description: "基础+高斯模糊"
+          params:
+            data:
+              augmentation:
+                train:
+                  gaussian_blur:
+                    probability: 0.5
+                    sigma: [0.1, 2.0]
+        
+        - name: "full"
+          description: "完整增强（所有策略）"
+          params: {}  # 使用默认配置
+    
+    - name: "projection_dimensions"
+      description: "投影头维度影响（表4）"
+      base_config: "configs/simclr.yaml"
+      variations:
+        - name: "dim_64"
+          params:
+            model:
+              projection_dim: 64
+              projection_hidden_dim: 256
+        
+        - name: "dim_128"
+          params:
+            model:
+              projection_dim: 128
+              projection_hidden_dim: 512
+        
+        - name: "dim_256"
+          params:
+            model:
+              projection_dim: 256
+              projection_hidden_dim: 1024
+        
+        - name: "no_projection"
+          description: "无投影头（直接使用编码器特征）"
+          params:
+            model:
+              use_projection: false
+    
+    - name: "batch_sizes"
+      description: "批次大小影响（表5）"
+      base_config: "configs/simclr.yaml"
+      variations:
+        - name: "bs_64"
+          params:
+            data:
+              batch_size: 64
+        
+        - name: "bs_128"
+          params:
+            data:
+              batch_size: 128
+        
+        - name: "bs_256"
+          params:
+            data:
+              batch_size: 256
+        
+        - name: "bs_512"
+          params:
+            data:
+              batch_size: 512
+
+execution:
+  # 执行设置
+  output_dir: "./results/ablation"
+  num_gpus: 1
+  max_parallel_jobs: 2  # 同时运行的任务数
+  save_checkpoints: true
+  save_features: true
+  
+  # 训练设置
+  train_epochs: 100  # 消融实验可以减少轮次
+  linear_eval_epochs: 50
+  
+  # 资源限制
+  memory_limit: null  # GPU内存限制（MB）
+  time_limit: "12:00:00"  # 时间限制
+
+logging:
+  log_dir: "./logs/ablation"
+  tensorboard: true
+  wandb: false  # 是否使用Weights & Biases
+  
+  # 日志级别
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+evaluation:
+  metrics:
+    - "linear_accuracy"
+    - "training_time"
+    - "gpu_memory"
+    - "loss_curve"
+  
+  # 评估设置
+  linear_evaluation: true
+  feature_extraction: true
+  compute_statistics: true
+  
+  # 输出格式
+  output_formats:
+    - "csv"
+    - "json"
+    - "latex"
+    - "markdown"
+
+reporting:
+  # 报告生成设置
+  generate_tables: true
+  generate_plots: true
+  compare_with_baseline: true
+  baseline_model: "simclr_full"
+  
+  # 图表设置
+  plot_settings:
+    figsize: [10, 6]
+    dpi: 300
+    style: "seaborn"
+    color_palette: "Set2"
+  
+  # 表格设置
+  table_settings:
+    format: "github"  # github, latex, html, plain
+    float_format: "%.2f"
+    index: false

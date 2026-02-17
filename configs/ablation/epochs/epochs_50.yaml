@@ -1,0 +1,14 @@
+# 预训练50轮的消融实验
+include: "../../simclr.yaml"
+
+model:
+  name: "simclr"
+
+training:
+  epochs: 50  # 覆盖原配置
+
+experiment:
+  name: "epochs_50"
+  description: "SimCLR预训练50轮"
+  ablation_type: "pretrain_epochs"
+  group: "epochs"

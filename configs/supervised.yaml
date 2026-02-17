@@ -1,0 +1,50 @@
+# 监督学习配置 - 叶廷凯使用
+model:
+  name: "supervised"
+  encoder_type: "resnet18"  # 使用ResNet-18编码器
+
+data:
+  name: "cifar10"
+  root: "./data"            # 数据保存路径
+  batch_size: 256           # 批大小
+  num_workers: 2            # 数据加载线程数
+  train_split: 0.9          # 训练集比例
+  val_split: 0.1            # 验证集比例
+  
+  # 数据增强
+  augmentation:
+    train:
+      random_crop: true
+      random_horizontal_flip: true
+      color_jitter: 0.4      # 颜色扰动强度
+      random_grayscale: 0.2  # 随机灰度化概率
+    
+    test:
+      # 测试时只做归一化
+      normalize_only: true
+
+training:
+  epochs: 100                # 训练轮数
+  learning_rate: 0.001       # 学习率
+  weight_decay: 0.0001       # 权重衰减
+  momentum: 0.9              # SGD动量
+  optimizer: "adam"          # 优化器: adam/sgd
+  
+  # 学习率调度
+  scheduler:
+    type: "cosine"          # 余弦退火
+    warmup_epochs: 5        # 预热轮数
+  
+  # 检查点保存
+  save_frequency: 10        # 每10轮保存一次
+  save_best_only: true      # 只保存最佳模型
+
+evaluation:
+  linear_eval: true         # 是否进行线性评估
+  linear_epochs: 100        # 线性评估训练轮数
+  linear_lr: 0.01           # 线性评估学习率
+
+logging:
+  log_dir: "./logs/supervised"
+  checkpoint_dir: "./results/supervised/checkpoints"
+  tensorboard: false        # 是否使用TensorBoard

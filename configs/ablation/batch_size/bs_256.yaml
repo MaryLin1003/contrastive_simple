@@ -1,0 +1,15 @@
+# 批次大小256（基线）
+include: "../../simclr.yaml"
+
+model:
+  name: "simclr"
+
+data:
+  batch_size: 256
+
+experiment:
+  name: "bs_256"
+  description: "批次大小256（基线）"
+  ablation_type: "batch_size"
+  group: "batch_size"
+  is_baseline: true

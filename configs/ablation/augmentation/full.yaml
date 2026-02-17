@@ -1,0 +1,12 @@
+# 完整增强（所有策略）
+include: "../../simclr.yaml"
+
+model:
+  name: "simclr"
+
+experiment:
+  name: "aug_full"
+  description: "完整增强（所有策略）"
+  ablation_type: "augmentation"
+  group: "augmentation"
+  is_baseline: true

@@ -1,0 +1,14 @@
+# 投影头维度128（基线）
+include: "../../simclr.yaml"
+
+model:
+  name: "simclr"
+  projection_dim: 128
+  projection_hidden_dim: 512
+
+experiment:
+  name: "proj_128"
+  description: "投影头维度128（基线）"
+  ablation_type: "projection"
+  group: "projection"
+  is_baseline: true

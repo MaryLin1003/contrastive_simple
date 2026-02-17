@@ -1,0 +1,12 @@
+# 无投影头
+include: "../../simclr.yaml"
+
+model:
+  name: "simclr"
+  use_projection: false
+
+experiment:
+  name: "no_proj"
+  description: "无投影头"
+  ablation_type: "projection"
+  group: "projection"

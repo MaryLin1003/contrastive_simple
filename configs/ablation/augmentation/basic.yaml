@@ -1,0 +1,30 @@
+# 基础数据增强（只有裁剪和翻转）
+include: "../../simclr.yaml"
+
+model:
+  name: "simclr"
+
+data:
+  augmentation:
+    train:
+      random_resized_crop:
+        size: 32
+        scale: [0.2, 1.0]
+      random_horizontal_flip: true
+      # 禁用其他增强
+      color_jitter:
+        brightness: 0.0
+        contrast: 0.0
+        saturation: 0.0
+        hue: 0.0
+        probability: 0.0
+      random_grayscale:
+        probability: 0.0
+      gaussian_blur:
+        probability: 0.0
+
+experiment:
+  name: "aug_basic"
+  description: "基础增强（裁剪+翻转）"
+  ablation_type: "augmentation"
+  group: "augmentation"

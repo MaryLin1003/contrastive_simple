@@ -1,0 +1,26 @@
+# 基础增强 + 高斯模糊
+include: "../../simclr.yaml"
+
+model:
+  name: "simclr"
+
+data:
+  augmentation:
+    train:
+      random_resized_crop:
+        size: 32
+        scale: [0.2, 1.0]
+      random_horizontal_flip: true
+      color_jitter:
+        probability: 0.0
+      random_grayscale:
+        probability: 0.0
+      gaussian_blur:
+        probability: 0.5
+        sigma: [0.1, 2.0]
+
+experiment:
+  name: "aug_blur"
+  description: "基础+高斯模糊"
+  ablation_type: "augmentation"
+  group: "augmentation"

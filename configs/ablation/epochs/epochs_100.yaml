@@ -1,0 +1,13 @@
+include: "../../simclr.yaml"
+
+model:
+  name: "simclr"
+
+training:
+  epochs: 100
+
+experiment:
+  name: "epochs_100"
+  description: "SimCLR预训练100轮"
+  ablation_type: "pretrain_epochs"
+  group: "epochs"

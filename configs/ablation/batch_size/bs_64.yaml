@@ -1,0 +1,14 @@
+# 批次大小64
+include: "../../simclr.yaml"
+
+model:
+  name: "simclr"
+
+data:
+  batch_size: 64
+
+experiment:
+  name: "bs_64"
+  description: "批次大小64"
+  ablation_type: "batch_size"
+  group: "batch_size"

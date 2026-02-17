@@ -1,0 +1,13 @@
+# 投影头维度64
+include: "../../simclr.yaml"
+
+model:
+  name: "simclr"
+  projection_dim: 64
+  projection_hidden_dim: 256
+
+experiment:
+  name: "proj_64"
+  description: "投影头维度64"
+  ablation_type: "projection"
+  group: "projection"

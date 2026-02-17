@@ -1,0 +1,14 @@
+# 批次大小512
+include: "../../simclr.yaml"
+
+model:
+  name: "simclr"
+
+data:
+  batch_size: 512
+
+experiment:
+  name: "bs_512"
+  description: "批次大小512"
+  ablation_type: "batch_size"
+  group: "batch_size"

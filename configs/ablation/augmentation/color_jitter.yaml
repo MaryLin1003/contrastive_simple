@@ -1,0 +1,29 @@
+# 基础增强 + 颜色抖动
+include: "../../simclr.yaml"
+
+model:
+  name: "simclr"
+
+data:
+  augmentation:
+    train:
+      random_resized_crop:
+        size: 32
+        scale: [0.2, 1.0]
+      random_horizontal_flip: true
+      color_jitter:
+        brightness: 0.8
+        contrast: 0.8
+        saturation: 0.8
+        hue: 0.2
+        probability: 0.8
+      random_grayscale:
+        probability: 0.2
+      gaussian_blur:
+        probability: 0.0
+
+experiment:
+  name: "aug_color"
+  description: "基础+颜色抖动"
+  ablation_type: "augmentation"
+  group: "augmentation"

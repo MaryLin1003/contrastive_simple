@@ -1,0 +1,64 @@
+# SimCLR配置 - 林灵使用
+model:
+  name: "simclr"
+  encoder_type: "resnet18"    # 编码器类型
+  projection_dim: 128         # 投影头输出维度
+  projection_hidden_dim: 512  # 投影头隐藏层维度
+  temperature: 0.5            # 对比损失温度参数
+  use_batchnorm: true         # 投影头是否使用BatchNorm
+
+data:
+  name: "cifar10"
+  root: "./data"
+  batch_size: 256             # SimCLR需要较大批次
+  num_workers: 2
+  train_split: 0.9
+  val_split: 0.1
+  
+  # SimCLR特定的强数据增强
+  augmentation:
+    train:
+      random_resized_crop:
+        size: 32
+        scale: [0.2, 1.0]     # 随机裁剪比例
+      random_horizontal_flip: true
+      color_jitter:
+        brightness: 0.8
+        contrast: 0.8
+        saturation: 0.8
+        hue: 0.2
+        probability: 0.8
+      random_grayscale:
+        probability: 0.2
+      gaussian_blur:
+        probability: 0.5
+        sigma: [0.1, 2.0]
+      solarize: false         # 是否使用曝光调整
+
+training:
+  epochs: 200                 # SimCLR需要更多轮次
+  learning_rate: 0.03         # 较大学习率
+  weight_decay: 0.0005
+  optimizer: "adamw"          # 使用AdamW优化器
+  
+  scheduler:
+    type: "cosine"
+    warmup_epochs: 10         # 更长的预热
+  
+  # 对比学习特定参数
+  contrastive:
+    loss_type: "nt_xent"      # NT-Xent损失
+    gather_distributed: false # 是否多GPU gather
+    
+  save_frequency: 20
+  save_best_only: true
+
+evaluation:
+  linear_eval: true
+  linear_epochs: 100
+  linear_lr: 0.01
+
+logging:
+  log_dir: "./logs/simclr"
+  checkpoint_dir: "./results/simclr/checkpoints"
+  tensorboard: false

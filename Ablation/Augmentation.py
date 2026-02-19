@@ -357,18 +357,49 @@ print("="*60)
 # 运行实验
 results = {}
 
-# 先测试5轮，确保一切正常
-print("\n🔹 测试实验: aug_basic (5轮)")
+# ========== 正式运行数据增强实验 ==========
+print("="*60)
+print("🚀 开始正式数据增强实验")
+print("="*60)
+
+results = {}
+
+# 基础增强 (100轮)
+print("\n🔹 实验: aug_basic (100轮)")
 history_basic = run_ablation_experiment(
-    exp_name='aug_basic_test',
+    exp_name='aug_basic',
     config_path='configs/ablation/augmentation/basic.yaml',
-    target_epochs=5,
+    target_epochs=100,  # 改为100轮
     output_base='./results/ablation_simplified/augmentation'
 )
-results['aug_basic_test'] = {
+results['aug_basic'] = {
     'final_loss': history_basic['train_loss'][-1],
     'time': history_basic['total_time'] / 3600
 }
 
-print("\n✅ 测试完成！可以开始正式训练")
-print("如需正式训练，请修改 target_epochs=100 后重新运行")
+# 完整增强 (100轮)
+print("\n🔹 实验: aug_full (100轮)")
+history_full = run_ablation_experiment(
+    exp_name='aug_full',
+    config_path='configs/ablation/augmentation/full.yaml',
+    target_epochs=100,  # 改为100轮
+    output_base='./results/ablation_simplified/augmentation'
+)
+results['aug_full'] = {
+    'final_loss': history_full['train_loss'][-1],
+    'time': history_full['total_time'] / 3600
+}
+
+# 打印结果
+print("\n" + "="*60)
+print("📊 数据增强实验结果")
+print("="*60)
+print(f"基础增强: 损失={results['aug_basic']['final_loss']:.4f}")
+print(f"完整增强: 损失={results['aug_full']['final_loss']:.4f}")
+print(f"改进: {results['aug_basic']['final_loss'] - results['aug_full']['final_loss']:.4f}")
+
+# 保存结果
+results_path = './results/ablation_simplified/augmentation_summary.json'
+with open(results_path, 'w') as f:
+    json.dump(results, f, indent=2)
+print(f"\n💾 结果已保存到: {results_path}")
